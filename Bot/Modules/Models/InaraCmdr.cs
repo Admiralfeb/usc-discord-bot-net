@@ -38,7 +38,7 @@ public class CmdrSquadron
 {
     public int SquadronId { get; set; }
     public string SquadronName { get; set; }
-    public string SquadronMembersCount { get; set; }
+    public int SquadronMembersCount { get; set; }
     public string SquadronMemberRank { get; set; }
     public string InaraUrl { get; set; }
 }

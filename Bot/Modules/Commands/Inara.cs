@@ -14,7 +14,7 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
     private readonly HttpClient _httpClient;
     private readonly InaraConfig _config;
     private readonly IEnumerable<Rank> _ranks;
-    public InaraCommandModule(HttpClient httpClient, IOptions<InaraConfig> config, IOptions<IEnumerable<Rank>> ranks) : base()
+    public InaraCommandModule(HttpClient httpClient, IOptions<InaraConfig> config, IOptions<List<Rank>> ranks) : base()
     {
         _httpClient = httpClient;
         _config = config.Value;
@@ -49,15 +49,14 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
         request.Content = new StringContent(inaraRequest.ToString(), Encoding.UTF8, "application/json");
         var response = await _httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
-        InaraResponse[]? inaraResponses = await response.Content.ReadFromJsonAsync<InaraResponse[]>();
+        var stringResponse = await response.Content.ReadAsStringAsync();
+        var inaraResponse = await response.Content.ReadFromJsonAsync<InaraResponse>();
 
-        if (inaraResponses == null)
+        if (inaraResponse == null)
             return res => { res.Content = "There was an error"; };
 
-
-
-        InaraResponse inaraResponse = inaraResponses[0];
-        if (inaraResponse.EventStatus == (int)InaraResponseCodes.NotFound)
+        var eventResponse = inaraResponse.Events.First();
+        if (eventResponse.EventStatus == (int)InaraResponseCodes.NotFound)
         {
             Embed embed = new EmbedBuilder()
             .WithTitle("No Profiles Found")
@@ -66,7 +65,7 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
 
             return res => { res.Embed = embed; };
         }
-        if (inaraResponse.EventStatus == (int)InaraResponseCodes.Error)
+        if (eventResponse.EventStatus == (int)InaraResponseCodes.Error)
         {
             Embed embed = new EmbedBuilder()
             .WithTitle("Error")
@@ -76,25 +75,21 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
             return res => { res.Embed = embed; };
         }
 
-        InaraCmdr cmdr = inaraResponse.EventData;
+        InaraCmdr cmdr = eventResponse.EventData;
 
         var embedBuilder = new EmbedBuilder()
-        .WithTitle("Inara Profile")
-        .WithUrl(cmdr.InaraUrl)
-        .WithDescription(cmdr.PreferredGameRole ?? "N/A")
-        .WithAuthor(new EmbedAuthorBuilder()
-        .WithName(cmdr.CommanderName ?? cmdr.UserName)
-        .WithIconUrl(cmdr.AvatarImageUrl)
-        .WithUrl(cmdr.InaraUrl))
-        .WithFooter($"Retrieved from Inara at the behest of {user}");
+            .WithTitle("Inara Profile")
+            .WithUrl(cmdr.InaraUrl)
+            .WithDescription(cmdr.PreferredGameRole ?? "N/A")
+            .WithAuthor(new EmbedAuthorBuilder()
+                .WithName(cmdr.CommanderName ?? cmdr.UserName)
+                .WithIconUrl(cmdr.AvatarImageUrl)
+                .WithUrl(cmdr.InaraUrl))
+            .WithFooter($"Retrieved from Inara at the behest of {user}");
 
         ComponentBuilder componentBuilder = new();
         ActionRowBuilder actionRowBuilder = new();
-        componentBuilder.WithButton(new ButtonBuilder()
-        .WithStyle(ButtonStyle.Link)
-        .WithLabel("Inara Profile")
-        .WithUrl(cmdr.InaraUrl)
-        .Build());
+        componentBuilder.WithButton("Inara Profile", style: ButtonStyle.Link, url: cmdr.InaraUrl);
 
         if (cmdr.AvatarImageUrl != null)
             embedBuilder.WithThumbnailUrl(cmdr.AvatarImageUrl);
@@ -106,9 +101,11 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
             var rankSet = _ranks.First(x => x.Name == rankName || x.InaraName == rankName);
             var currentRank = rankSet.Ranks.ElementAt(rankValue);
             var rankProgress =
-            currentRank == "Elite V" ||
-            currentRank == "King" ||
-            currentRank == "Admiral" ? "" : $"- {Math.Round(rank.RankProgress * 100, 2)}%";
+                currentRank == "Elite V" ||
+                currentRank == "King" ||
+                currentRank == "Admiral" ?
+                    "" :
+                    $"- {Math.Round(rank.RankProgress * 100, 2)}%";
 
             embedBuilder.AddField(rankSet.Name.ToUpper(), $"{currentRank} {rankProgress}", true);
         }
@@ -116,11 +113,11 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
         if (cmdr.CommanderSquadron != null)
         {
             embedBuilder.AddField("Squadron", cmdr.CommanderSquadron.SquadronName);
-            actionRowBuilder.AddComponent(new ButtonBuilder()
-        .WithStyle(ButtonStyle.Link)
-        .WithLabel(cmdr.CommanderSquadron.SquadronName)
-        .WithUrl(cmdr.CommanderSquadron.InaraUrl)
-        .Build());
+            componentBuilder.WithButton(
+                cmdr.CommanderSquadron.SquadronName,
+                style: ButtonStyle.Link,
+                url: cmdr.CommanderSquadron.InaraUrl
+            );
         }
 
         if (cmdr.OtherNamesFound != null)
@@ -131,11 +128,10 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
             return res =>
             {
                 res.Embeds = new Embed[] { othersFoundEmbed.Build(), embedBuilder.Build() };
-                res.Components = actionRowBuilder.Build().Components;
+                res.Components = componentBuilder.Build();
             };
         }
 
-
-        return res => { res.Content = "GetCmdrData Not Yet Implemented"; };
+        return res => { res.Embed = embedBuilder.Build(); res.Components = componentBuilder.Build(); };
     }
 }

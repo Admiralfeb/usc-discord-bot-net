@@ -70,7 +70,7 @@ class Program
             client.BaseAddress = new Uri("https://inara.cz/inapi/v1");
         });
         services.Configure<InaraConfig>(configuration.GetSection(InaraConfig.ConfigName));
-        services.Configure<IEnumerable<Rank>>(configuration.GetSection("ranks"));
+        services.Configure<List<Rank>>(configuration.GetSection("ranks"));
 
         return services.BuildServiceProvider();
     }
