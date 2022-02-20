@@ -1,5 +1,7 @@
 namespace UnitedSystemsCooperative.Bot.Modules.Models;
 
+// Disable nullable warning.
+#pragma warning disable CS8618
 public class InaraCmdr
 {
     public long UserId { get; set; }
@@ -20,7 +22,7 @@ public class InaraCmdr
 public class CommanderPilotRank
 {
     public string RankName { get; set; }
-    public string RankValue { get; set; }
+    public int RankValue { get; set; }
     public double RankProgress { get; set; }
 }
 
