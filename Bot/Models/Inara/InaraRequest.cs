@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace UnitedSystemsCooperative.Bot.Modules.Models;
+namespace UnitedSystemsCooperative.Bot.Models;
 
 // Disable nullable warning.
 #pragma warning disable CS8618

@@ -4,7 +4,7 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Options;
-using UnitedSystemsCooperative.Bot.Modules.Models;
+using UnitedSystemsCooperative.Bot.Models;
 
 namespace UnitedSystemsCooperative.Bot.Modules.Commands;
 
@@ -133,5 +133,17 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
         }
 
         return res => { res.Embed = embedBuilder.Build(); res.Components = componentBuilder.Build(); };
+    }
+
+    [SlashCommand("squadron", "Get the inara squad link")]
+    public async Task GetInaraSquadLink()
+    {
+        await RespondAsync("Inara Squadron",
+            components: new ComponentBuilder()
+                .WithButton("United Systems Cooperative",
+                    style: ButtonStyle.Link,
+                    url: "https://inara.cz/squadron/7028/"
+                )
+                .Build());
     }
 }

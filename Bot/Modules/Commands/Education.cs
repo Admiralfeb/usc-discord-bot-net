@@ -1,6 +1,8 @@
 using System.Text;
 using Discord;
 using Discord.Interactions;
+using Microsoft.Extensions.Options;
+using UnitedSystemsCooperative.Bot.Models;
 
 namespace UnitedSystemsCooperative.Bot.Modules.Commands;
 
@@ -8,6 +10,12 @@ namespace UnitedSystemsCooperative.Bot.Modules.Commands;
 public class EducationCommandModule : InteractionModuleBase<SocketInteractionContext>
 {
     private const string INFORMATION_SENT = "Information sent to user.";
+    private readonly List<Rank> _ranks;
+
+    public EducationCommandModule(IOptions<List<Rank>> ranks) : base()
+    {
+        _ranks = ranks.Value;
+    }
 
     [SlashCommand("combat-logging", "What is combat logging?")]
     public async Task EducateOnCombatLogging(IUser? user = null)
@@ -133,29 +141,68 @@ public class EducationCommandModule : InteractionModuleBase<SocketInteractionCon
     public async Task EducateOnRanks(
         [Summary(description:"Rank to see")]
         [Choice("Combat - Ship Only", "combat")]
-        [Choice("Combat - Ship Only", "combat")]
-        [Choice("Combat - Ship Only", "combat")]
-        [Choice("Combat - Ship Only", "combat")]
-        [Choice("Combat - Ship Only", "combat")]
-        [Choice("Combat - Ship Only", "combat")]
-        [Choice("Combat - Ship Only", "combat")]
-        [Choice("Combat - Ship Only", "combat")]
+        [Choice("Trade - Ship Only", "trade")]
+        [Choice("Exploration - Ship Only", "exploration")]
+        [Choice("CQC - Ship Only", "cqc")]
+        [Choice("Exobiologist - Foot Only", "exobiologist")]
+        [Choice("Mercenary - Foot Only", "mercenary")]
+        [Choice("Imperial Navy", "empire")]
+        [Choice("Federal Navy", "federation")]
         string rankSet,
         IUser? user = null
     )
     {
+        var rankList = _ranks.FirstOrDefault(x => x.Name == rankSet)?.Ranks ?? null;
+        if (rankList == null)
+        {
+            await RespondAsync("That rank does not exist.", ephemeral: true);
+            return;
+        }
+
+        var rankEmbed = new EmbedBuilder()
+            .WithTitle("Ranks")
+            .WithDescription("Listed from lowest to highest")
+            .AddField(
+                rankSet.ToUpper(),
+                string.Join('\n', rankList)
+            )
+            .Build();
+
+        if (user != null)
+        {
+            await user.SendMessageAsync(embed: rankEmbed);
+            await RespondAsync(INFORMATION_SENT, ephemeral: true);
+        }
+        else
+            await RespondAsync(embed: rankEmbed);
 
     }
 
     [SlashCommand("scoopable", "What stars can I scooop?")]
     public async Task EducateOnKgbFoam(IUser? user = null)
     {
+        string message = "Learn to filter the galaxy map for scoopable stars at: https://confluence.fuelrats.com/pages/releaseview.action?pageId=1507609\n\nOther languages available at: https://confluence.fuelrats.com/display/public/FRKB/KGBFOAM";
+        if (user != null)
+        {
+            await user.SendMessageAsync(message);
+            await RespondAsync(INFORMATION_SENT, ephemeral: true);
+        }
+        else
+            await RespondAsync(message);
 
     }
 
     [SlashCommand("websites", "Gives a list of 3rd party websites")]
     public async Task EducateOn3rdPartySites(IUser? user = null)
     {
+        string message = "Find mostly anything related to trading, combat and player stats at: https://inara.cz\nFind accurate trading data at: https://eddb.io\nFind accurate exploration data at: https://edsm.net\nBuild ships virtually and test their stats at: https://coriolis.io and https://edsy.org\nFind mining hotspots and sell locations at: https://edtools.cc/miner\nNeutron highway and road to riches at: https://spansh.co.uk\nUseful material finding, fleet carrier calculators, and more at: https://cmdrs-toolbox.com/\nNeed fuel? https://fuelrats.com";
+        if (user != null)
+        {
+            await user.SendMessageAsync(message);
+            await RespondAsync(INFORMATION_SENT, ephemeral: true);
+        }
+        else
+            await RespondAsync(message);
 
     }
 }

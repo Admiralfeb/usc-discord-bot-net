@@ -21,4 +21,11 @@ public class GeneralCommandsModule : InteractionModuleBase<SocketInteractionCont
     {
         await RespondAsync("https://tenor.com/view/cease-your-heresy-warhammer-40k-gif-19005947");
     }
+
+    [SlashCommand("set-email", "Sets your email in the CMDR system allowing you to log into the USC Website")]
+    public async Task SetEmail(string email)
+    {
+        await DeferAsync(ephemeral: true);
+
+    }
 }

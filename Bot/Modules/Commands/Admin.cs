@@ -1,5 +1,6 @@
 using Discord;
 using Discord.Interactions;
+using UnitedSystemsCooperative.Bot.Models;
 
 namespace UnitedSystemsCooperative.Bot.Modules.Commands;
 
@@ -73,11 +74,4 @@ public enum CmdrType
     Member,
     Ambassador,
     Guest
-}
-
-public enum PlatformType
-{
-    PC,
-    Xbox,
-    PlayStation
 }

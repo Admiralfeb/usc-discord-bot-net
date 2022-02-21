@@ -1,4 +1,4 @@
-namespace UnitedSystemsCooperative.Bot.Modules.Models;
+namespace UnitedSystemsCooperative.Bot.Models;
 
 public enum InaraResponseCodes
 {

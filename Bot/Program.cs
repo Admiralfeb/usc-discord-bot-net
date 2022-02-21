@@ -1,13 +1,11 @@
 ﻿
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
 using Discord;
 using Discord.Interactions;
-
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using UnitedSystemsCooperative.Bot.Models;
 using UnitedSystemsCooperative.Bot.Modules.Commands;
-using UnitedSystemsCooperative.Bot.Modules.Models;
 
 namespace UnitedSystemsCooperative.Bot;
 

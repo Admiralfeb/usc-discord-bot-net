@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace UnitedSystemsCooperative.Bot.Modules.Models;
+namespace UnitedSystemsCooperative.Bot.Models;
 
 public class InaraResponse
 {
