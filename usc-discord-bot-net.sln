@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot", "Bot\Bot.csproj", "{095030FC-0853-4677-8B15-24E40FE70961}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot.Test", "Bot.Test\Bot.Test.csproj", "{EA2C1A43-6835-43BD-9276-5EC971CD6022}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{095030FC-0853-4677-8B15-24E40FE70961}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{095030FC-0853-4677-8B15-24E40FE70961}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{095030FC-0853-4677-8B15-24E40FE70961}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
