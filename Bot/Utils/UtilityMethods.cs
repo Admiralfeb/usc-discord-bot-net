@@ -8,8 +8,8 @@ public static class UtilityMethods
         while (true)
         {
             await action();
-            await timer.WaitForNextTickAsync(cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
+            await timer.WaitForNextTickAsync(cancellationToken);
         }
     }
 }
