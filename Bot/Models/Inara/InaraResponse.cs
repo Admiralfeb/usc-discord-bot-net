@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 
+#pragma warning disable CS8618
+
 namespace UnitedSystemsCooperative.Bot.Models;
 
 public class InaraResponse

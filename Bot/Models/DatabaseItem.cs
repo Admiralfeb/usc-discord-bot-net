@@ -1,3 +1,4 @@
+#pragma warning disable CS8618
 namespace UnitedSystemsCooperative.Bot.Models;
 
 public class DatabaseItemBase

@@ -32,15 +32,8 @@ class Program
         client.Log += LogAsync;
         commands.Log += LogAsync;
 
-        client.Ready += async () =>
-        {
-            if (IsDebug())
-                await commands.RegisterCommandsToGuildAsync(configuration.GetValue<ulong>("testGuild"), true);
-            else
-                await commands.RegisterCommandsGloballyAsync(true);
-        };
-
         await services.GetRequiredService<CommandHandler>().InitializeAsync();
+        services.GetRequiredService<BotEventHandler>().Initialize();
 
         var botToken = configuration.GetValue<string>("BotToken");
         await client.LoginAsync(TokenType.Bot, botToken);
@@ -62,6 +55,7 @@ class Program
         services.AddSingleton<DiscordSocketClient>();
         services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
         services.AddSingleton<CommandHandler>();
+        services.AddSingleton<BotEventHandler>();
 
         services.AddHttpClient<InaraCommandModule>(client =>
         {
@@ -71,14 +65,5 @@ class Program
         services.Configure<List<Rank>>(configuration.GetSection("ranks"));
 
         return services.BuildServiceProvider();
-    }
-
-    static bool IsDebug()
-    {
-#if DEBUG
-        return true;
-#else
-                return false;
-#endif
     }
 }
