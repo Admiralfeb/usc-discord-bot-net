@@ -9,6 +9,7 @@ public static class UtilityMethods
         {
             await action();
             await timer.WaitForNextTickAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
         }
     }
 }
