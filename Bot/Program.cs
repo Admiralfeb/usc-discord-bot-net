@@ -9,7 +9,7 @@ using UnitedSystemsCooperative.Bot.Modules.Commands;
 
 namespace UnitedSystemsCooperative.Bot;
 
-class Program
+static class Program
 {
     static void Main(string[] _)
     {
@@ -59,7 +59,7 @@ class Program
 
         services.AddHttpClient<InaraCommandModule>(client =>
         {
-            client.BaseAddress = new Uri("https://inara.cz/inapi/v1");
+            client.BaseAddress = new Uri(configuration["InaraConfig:ApiUrl"]);
         });
         services.Configure<InaraConfig>(configuration.GetSection(InaraConfig.ConfigName));
         services.Configure<List<Rank>>(configuration.GetSection("ranks"));

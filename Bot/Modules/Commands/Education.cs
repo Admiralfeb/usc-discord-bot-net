@@ -152,7 +152,7 @@ public class EducationCommandModule : InteractionModuleBase<SocketInteractionCon
         IUser? user = null
     )
     {
-        var rankList = _ranks.FirstOrDefault(x => x.Name == rankSet)?.Ranks ?? null;
+        var rankList = _ranks.FirstOrDefault(x => x.Name == rankSet)?.Ranks;
         if (rankList == null)
         {
             await RespondAsync("That rank does not exist.", ephemeral: true);

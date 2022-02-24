@@ -49,7 +49,6 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
         request.Content = new StringContent(inaraRequest.ToString(), Encoding.UTF8, "application/json");
         var response = await _httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
-        var stringResponse = await response.Content.ReadAsStringAsync();
         var inaraResponse = await response.Content.ReadFromJsonAsync<InaraResponse>();
 
         if (inaraResponse == null)
@@ -88,7 +87,6 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
             .WithFooter($"Retrieved from Inara at the behest of {user}");
 
         ComponentBuilder componentBuilder = new();
-        ActionRowBuilder actionRowBuilder = new();
         componentBuilder.WithButton("Inara Profile", style: ButtonStyle.Link, url: cmdr.InaraUrl);
 
         if (cmdr.AvatarImageUrl != null)

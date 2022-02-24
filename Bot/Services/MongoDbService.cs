@@ -18,11 +18,7 @@ public class MongoDbService : IDatabaseService
         var client = GetClient();
         var database = client.GetDatabase("usc");
         var collection = database.GetCollection<T>("discordKeys");
-        var doc = await collection.Find(Builders<T>.Filter.Eq("key", key)).FirstOrDefaultAsync();
-        if (doc == null)
-        {
-            throw new Exception("Item Not Found");
-        }
+        var doc = await collection.Find(Builders<T>.Filter.Eq("key", key)).FirstAsync();
 
         return doc;
     }

@@ -11,7 +11,7 @@ public class GeneralCommandsModule : InteractionModuleBase<SocketInteractionCont
         var builder = new ComponentBuilder()
         .WithButton("Click Me to find out fi you can supercruise there.",
         style: ButtonStyle.Link,
-        url: "http://caniflytothenextstarinelitedangero.us/");
+        url: "https://caniflytothenextstarinelitedangero.us/");
 
         await RespondAsync("Click the button below.", components: builder.Build());
     }
