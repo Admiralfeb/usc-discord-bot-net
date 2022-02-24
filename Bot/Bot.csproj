@@ -10,7 +10,8 @@
 
   <ItemGroup>
     <Content Include="appsettings.local.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
