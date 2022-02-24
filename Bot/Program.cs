@@ -4,8 +4,11 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using UnitedSystemsCooperative.Bot.Interfaces;
 using UnitedSystemsCooperative.Bot.Models;
+using UnitedSystemsCooperative.Bot.Modules;
 using UnitedSystemsCooperative.Bot.Modules.Commands;
+using UnitedSystemsCooperative.Bot.Services;
 
 namespace UnitedSystemsCooperative.Bot;
 
@@ -56,11 +59,10 @@ static class Program
         services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
         services.AddSingleton<CommandHandler>();
         services.AddSingleton<BotEventHandler>();
+        services.AddSingleton<IDatabaseService, MongoDbService>();
 
-        services.AddHttpClient<InaraCommandModule>(client =>
-        {
-            client.BaseAddress = new Uri(configuration["InaraConfig:ApiUrl"]);
-        });
+        services.AddHttpClient<InaraCommandModule>();
+        services.AddHttpClient<GalnetModule>();
         services.Configure<InaraConfig>(configuration.GetSection(InaraConfig.ConfigName));
         services.Configure<List<Rank>>(configuration.GetSection("ranks"));
 
