@@ -29,7 +29,7 @@ static class Program
     {
         using var services = ConfigureServices(configuration);
 
-        var client = services.GetRequiredService<DiscordSocketClient>();
+        var client = services.GetRequiredService<BotSocketClient>();
         var commands = services.GetRequiredService<InteractionService>();
 
         client.Log += LogAsync;
@@ -55,8 +55,8 @@ static class Program
     {
         var services = new ServiceCollection();
         services.AddSingleton(configuration);
-        services.AddSingleton<DiscordSocketClient>();
-        services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
+        services.AddSingleton<BotSocketClient>();
+        services.AddSingleton(x => new InteractionService(x.GetRequiredService<BotSocketClient>()));
         services.AddSingleton<CommandHandler>();
         services.AddSingleton<BotEventHandler>();
         services.AddSingleton<IDatabaseService, MongoDbService>();

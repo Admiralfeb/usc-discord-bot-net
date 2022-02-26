@@ -7,14 +7,14 @@ namespace UnitedSystemsCooperative.Bot;
 
 public class BotEventHandler
 {
-    private readonly DiscordSocketClient _client;
+    private readonly BotSocketClient _client;
     private readonly InteractionService _commands;
     private readonly IServiceProvider _services;
     private readonly IConfiguration _configuration;
 
 
     public BotEventHandler(
-        DiscordSocketClient client,
+        BotSocketClient client,
         InteractionService commands,
         IServiceProvider services,
         IConfiguration configuration)

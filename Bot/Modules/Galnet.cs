@@ -14,9 +14,9 @@ public class GalnetModule
     private readonly HttpClient _http;
     private readonly IDatabaseService _db;
     private readonly string _galnetApi;
-    private readonly DiscordSocketClient _client;
+    private readonly BotSocketClient _client;
     private CancellationTokenSource? cancellationTokenSource;
-    public GalnetModule(IDatabaseService db, IConfiguration config, HttpClient http, DiscordSocketClient client)
+    public GalnetModule(IDatabaseService db, IConfiguration config, HttpClient http, BotSocketClient client)
     {
         _db = db;
         _galnetApi = config.GetValue<string>("galnetApi");

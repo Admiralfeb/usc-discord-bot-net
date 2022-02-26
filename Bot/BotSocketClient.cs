@@ -1,6 +1,5 @@
 using Discord;
 using Discord.WebSocket;
-using UnitedSystemsCooperative.Bot.Interfaces;
 
 namespace UnitedSystemsCooperative.Bot;
 
@@ -11,7 +10,7 @@ public class BotSocketClient : DiscordSocketClient
 
     }
 
-    public new async Task LoginAsync(TokenType tokenType, string token, bool validateToken = true)
+    public new virtual async Task LoginAsync(TokenType tokenType, string token, bool validateToken = true)
     {
         await base.LoginAsync(tokenType, token, validateToken);
     }
