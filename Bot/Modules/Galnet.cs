@@ -15,6 +15,7 @@ public class GalnetModule
     private readonly IDatabaseService _db;
     private readonly string _galnetApi;
     private readonly DiscordSocketClient _client;
+    private CancellationTokenSource? cancellationTokenSource;
     public GalnetModule(IDatabaseService db, IConfiguration config, HttpClient http, DiscordSocketClient client)
     {
         _db = db;
@@ -25,7 +26,22 @@ public class GalnetModule
 
     public async Task InitializeAsync()
     {
-        await UtilityMethods.PeriodicAsync(PollGalnet, TimeSpan.FromMinutes(10));
+        try
+        {
+            cancellationTokenSource = new CancellationTokenSource();
+            await UtilityMethods.PeriodicAsync(PollGalnet, TimeSpan.FromMinutes(10), cancellationTokenSource.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            Console.WriteLine("Galnet Module disabled");
+            cancellationTokenSource = null;
+        }
+    }
+
+    public void Stop()
+    {
+        Console.WriteLine("Galnet Module disable requested. May take up to 10 minutes to process.");
+        cancellationTokenSource?.Cancel();
     }
 
     private async Task PollGalnet()
