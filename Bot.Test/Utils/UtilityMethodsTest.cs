@@ -23,12 +23,12 @@ public class UtilityMethodsTest
         cancelTokenSource.CancelAfter(10 * 1000);
 
         int runs = 0;
-        async Task myAction()
+        async Task MyAction()
         {
             await Task.Run(() => runs++);
         }
 
-        await Assert.ThrowsAsync<OperationCanceledException>(() => UtilityMethods.PeriodicAsync(() => myAction(), TimeSpan.FromSeconds(5), cancelTokenSource.Token));
+        await Assert.ThrowsAsync<OperationCanceledException>(() => UtilityMethods.PeriodicAsync(() => MyAction(), TimeSpan.FromSeconds(5), cancelTokenSource.Token));
         Assert.Equal(2, runs);
     }
 }
