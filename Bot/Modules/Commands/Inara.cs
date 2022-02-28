@@ -14,7 +14,7 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
     private readonly HttpClient _httpClient;
     private readonly InaraConfig _config;
     private readonly IEnumerable<Rank> _ranks;
-    public InaraCommandModule(HttpClient httpClient, IOptions<InaraConfig> config, IOptions<List<Rank>> ranks) : base()
+    public InaraCommandModule(HttpClient httpClient, IOptions<InaraConfig> config, IOptions<List<Rank>> ranks)
     {
         _httpClient = httpClient;
         _config = config.Value;
@@ -44,7 +44,7 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
             EventData = new InaraRequestEventData() { SearchName = cmdrName }
         };
 
-        InaraRequest inaraRequest = new() { Header = requestHeader, Events = new InaraRequestEvent[] { requestEvent } };
+        InaraRequest inaraRequest = new() { Header = requestHeader, Events = new[] { requestEvent } };
         HttpRequestMessage request = new(HttpMethod.Get, _config.ApiUrl);
         request.Content = new StringContent(inaraRequest.ToString(), Encoding.UTF8, "application/json");
         var response = await _httpClient.SendAsync(request);
@@ -125,7 +125,7 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
                 othersFoundEmbed.AddField("-", otherName, true);
             return res =>
             {
-                res.Embeds = new Embed[] { othersFoundEmbed.Build(), embedBuilder.Build() };
+                res.Embeds = new[] { othersFoundEmbed.Build(), embedBuilder.Build() };
                 res.Components = componentBuilder.Build();
             };
         }

@@ -15,7 +15,7 @@ public class GalnetModule
     private readonly IDatabaseService _db;
     private readonly string _galnetApi;
     private readonly BotSocketClient _client;
-    private CancellationTokenSource? cancellationTokenSource;
+    private CancellationTokenSource? _cancellationTokenSource;
     public GalnetModule(IDatabaseService db, IConfiguration config, HttpClient http, BotSocketClient client)
     {
         _db = db;
@@ -28,20 +28,20 @@ public class GalnetModule
     {
         try
         {
-            cancellationTokenSource = new CancellationTokenSource();
-            await UtilityMethods.PeriodicAsync(PollGalnet, TimeSpan.FromMinutes(10), cancellationTokenSource.Token);
+            _cancellationTokenSource = new CancellationTokenSource();
+            await UtilityMethods.PeriodicAsync(PollGalnet, TimeSpan.FromMinutes(10), _cancellationTokenSource.Token);
         }
         catch (OperationCanceledException)
         {
             Console.WriteLine("Galnet Module disabled");
-            cancellationTokenSource = null;
+            _cancellationTokenSource = null;
         }
     }
 
     public void Stop()
     {
         Console.WriteLine("Galnet Module disable requested. May take up to 10 minutes to process.");
-        cancellationTokenSource?.Cancel();
+        _cancellationTokenSource?.Cancel();
     }
 
     private async Task PollGalnet()
@@ -104,7 +104,7 @@ public class GalnetModule
             return article;
         });
 
-        List<string> titles = (await _db.GetValueAsync<DatabaseItemArray>("galnetTitles")).Value ?? new List<string>();
+        var titles = (await _db.GetValueAsync<DatabaseItemArray>("galnetTitles")).Value ?? new List<string>();
         var newArticles = processedData.Where(x => string.IsNullOrEmpty(titles.FirstOrDefault(y => y == x.Title)));
         var newtitles = new DatabaseItemArray()
         {

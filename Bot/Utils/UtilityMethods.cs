@@ -7,8 +7,8 @@ public static class UtilityMethods
         using var timer = new PeriodicTimer(interval);
         while (true)
         {
-            await action();
             cancellationToken.ThrowIfCancellationRequested();
+            await action();
             await timer.WaitForNextTickAsync(cancellationToken);
         }
     }

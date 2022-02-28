@@ -10,7 +10,6 @@ public class AdminCommandModule : InteractionModuleBase<SocketInteractionContext
     [Group("auth_users", "Controls the authorized admin users.")]
     public class AuthUsersSubCommands : InteractionModuleBase<SocketInteractionContext>
     {
-
         [SlashCommand("add", "Adds an admin user.")]
         public async Task AddAdminUser(IUser user)
         {
@@ -40,7 +39,8 @@ public class AdminCommandModule : InteractionModuleBase<SocketInteractionContext
         }
 
         [SlashCommand("manual", "Setup a user manually")]
-        public async Task SetupUserManually(IUser user, [Summary(description: "nickname - WITHOUT 'CMDR'")] string cmdrName, CmdrType type, PlatformType platform)
+        public async Task SetupUserManually(IUser user,
+            [Summary(description: "nickname - WITHOUT 'CMDR'")] string cmdrName, CmdrType type, PlatformType platform)
         {
             await RespondAsync("SetupUserManually not yet implemented.");
         }
@@ -55,7 +55,7 @@ public class AdminCommandModule : InteractionModuleBase<SocketInteractionContext
             await RespondAsync("AddGanker is not yet implemented.");
         }
 
-        [SlashCommand("delete", "Delete a ganker from the list")]
+        [SlashCommand("delete", "Remove a ganker from the list")]
         public async Task DeleteGanker(string cmdrName)
         {
             await RespondAsync("DeleteGanker is not yet implemented.");
