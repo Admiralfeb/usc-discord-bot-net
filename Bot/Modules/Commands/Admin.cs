@@ -1,7 +1,9 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using UnitedSystemsCooperative.Bot.Interfaces;
 using UnitedSystemsCooperative.Bot.Models;
+using UnitedSystemsCooperative.Bot.Models.Exceptions;
 
 namespace UnitedSystemsCooperative.Bot.Modules.Commands;
 
@@ -181,22 +183,149 @@ public class AdminCommandModule : InteractionModuleBase<SocketInteractionContext
     [Group("gankers", "Controls the ganker listing.")]
     public class GankerListSubCommands : InteractionModuleBase<SocketInteractionContext>
     {
+        private readonly IDatabaseService _db;
+
+        public GankerListSubCommands(IDatabaseService db)
+        {
+            _db = db;
+        }
+
         [SlashCommand("add", "Add a ganker to the list")]
         public async Task AddGanker(string cmdrName)
         {
-            await RespondAsync("AddGanker is not yet implemented.");
+            await DeferAsync(true);
+            var gankerList = await GetGankerList();
+
+            if (gankerList.Any(x => x.Equals(cmdrName, StringComparison.OrdinalIgnoreCase)))
+            {
+                await ModifyOriginalResponseAsync(x => x.Content = "Ganker is already in list");
+                return;
+            }
+
+            gankerList.Add(cmdrName);
+            await SetGankerList(gankerList);
+
+            try
+            {
+                await UpdateGankerMessage(gankerList);
+            }
+            catch (ChannelNotFoundException)
+            {
+                await ModifyOriginalResponseAsync(x => x.Content = "Channel could not be found.");
+                return;
+            }
+            catch (MessageNotFoundException)
+            {
+                await ModifyOriginalResponseAsync(x => x.Content = "Message could not be found.");
+                return;
+            }
+            catch (Exception)
+            {
+                await ModifyOriginalResponseAsync(x =>
+                    x.Content = "An error occurred when trying to update the Ganker message");
+                return;
+            }
+
+            await ModifyOriginalResponseAsync(x => x.Content = "Successfully updated ganker list");
         }
 
         [SlashCommand("delete", "Remove a ganker from the list")]
         public async Task DeleteGanker(string cmdrName)
         {
-            await RespondAsync("DeleteGanker is not yet implemented.");
+            await DeferAsync(true);
+            var gankerList = await GetGankerList();
+
+            var ganker = gankerList.FirstOrDefault(x => x.Equals(cmdrName, StringComparison.OrdinalIgnoreCase));
+
+            if (string.IsNullOrEmpty(ganker))
+            {
+                await ModifyOriginalResponseAsync(x => x.Content = "Ganker is not present in list.");
+                return;
+            }
+
+            gankerList.Remove(ganker);
+            await SetGankerList(gankerList);
+
+            try
+            {
+                await UpdateGankerMessage(gankerList);
+            }
+            catch (ChannelNotFoundException)
+            {
+                await ModifyOriginalResponseAsync(x => x.Content = "Channel could not be found.");
+                return;
+            }
+            catch (MessageNotFoundException)
+            {
+                await ModifyOriginalResponseAsync(x => x.Content = "Message could not be found.");
+                return;
+            }
+            catch (Exception)
+            {
+                await ModifyOriginalResponseAsync(x =>
+                    x.Content = "An error occurred when trying to update the Ganker message");
+                return;
+            }
+
+            await ModifyOriginalResponseAsync(x => x.Content = "Successfully updated ganker list");
         }
 
         [SlashCommand("update", "Updates the ganker list from the database")]
         public async Task UpdateGankerList()
         {
-            await RespondAsync("UpdateGankerList is not yet implemented.");
+            await DeferAsync(true);
+            var gankerList = await GetGankerList();
+
+            try
+            {
+                await UpdateGankerMessage(gankerList);
+            }
+            catch (ChannelNotFoundException)
+            {
+                await ModifyOriginalResponseAsync(x => x.Content = "Channel could not be found.");
+                return;
+            }
+            catch (MessageNotFoundException)
+            {
+                await ModifyOriginalResponseAsync(x => x.Content = "Message could not be found.");
+                return;
+            }
+            catch (Exception)
+            {
+                await ModifyOriginalResponseAsync(x =>
+                    x.Content = "An error occurred when trying to update the Ganker message");
+                return;
+            }
+
+            await ModifyOriginalResponseAsync(x => x.Content = "Successfully updated ganker list");
+        }
+
+        private async Task<List<string>> GetGankerList()
+        {
+            return (await _db.GetValueAsync<DatabaseItemArray<string>>("gankers")).Value;
+        }
+
+        private async Task SetGankerList(IEnumerable<string> gankers)
+        {
+            await _db.SetValueAsync("gankers", new DatabaseItemArray() {Key = "gankers", Value = gankers.ToList()});
+        }
+
+        private async Task UpdateGankerMessage(IEnumerable<string> gankerList)
+        {
+            var embed = new EmbedBuilder()
+                .WithTitle("Known Gankers")
+                .WithDescription(string.Join("\n", gankerList.Reverse()))
+                .Build();
+
+            var channelId = (await _db.GetValueAsync<DatabaseItem>("gank_report_channel")).Value;
+            var messageId = (await _db.GetValueAsync<DatabaseItem>("gank_report_message")).Value;
+            if (Context.Guild.GetChannel(ulong.Parse(channelId)) is not SocketTextChannel channel)
+                throw new ChannelNotFoundException();
+
+            if (await channel.GetMessageAsync(ulong.Parse(messageId)) is not SocketUserMessage message)
+                throw new MessageNotFoundException();
+
+            await message.ModifyAsync(x => x.Embeds = new[] {embed});
         }
     }
 }

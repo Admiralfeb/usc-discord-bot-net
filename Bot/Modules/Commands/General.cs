@@ -9,9 +9,9 @@ public class GeneralCommandsModule : InteractionModuleBase<SocketInteractionCont
     public async Task CanIScThere()
     {
         var builder = new ComponentBuilder()
-        .WithButton("Click Me to find out fi you can supercruise there.",
-        style: ButtonStyle.Link,
-        url: "https://caniflytothenextstarinelitedangero.us/");
+            .WithButton("Click Me to find out fi you can supercruise there.",
+                style: ButtonStyle.Link,
+                url: "https://caniflytothenextstarinelitedangero.us/");
 
         await RespondAsync("Click the button below.", components: builder.Build());
     }
@@ -20,12 +20,5 @@ public class GeneralCommandsModule : InteractionModuleBase<SocketInteractionCont
     public async Task Heresy()
     {
         await RespondAsync("https://tenor.com/view/cease-your-heresy-warhammer-40k-gif-19005947");
-    }
-
-    [SlashCommand("set-email", "Sets your email in the CMDR system allowing you to log into the USC Website")]
-    public async Task SetEmail(string email)
-    {
-        await DeferAsync(ephemeral: true);
-
     }
 }

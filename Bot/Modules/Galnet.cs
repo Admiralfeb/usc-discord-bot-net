@@ -16,6 +16,7 @@ public class GalnetModule
     private readonly string _galnetApi;
     private readonly BotSocketClient _client;
     private CancellationTokenSource? _cancellationTokenSource;
+
     public GalnetModule(IDatabaseService db, IConfiguration config, HttpClient http, BotSocketClient client)
     {
         _db = db;
@@ -57,15 +58,16 @@ public class GalnetModule
                 {
                     throw new Exception("no channel");
                 }
-                SocketNewsChannel channel = (SocketNewsChannel)await _client.GetChannelAsync(ulong.Parse(channelId));
+
+                SocketNewsChannel channel = (SocketNewsChannel) await _client.GetChannelAsync(ulong.Parse(channelId));
 
                 foreach (var article in newArticles)
                 {
                     var embed = new EmbedBuilder()
-                    .WithTitle(article.Title)
-                    .WithDescription(article.Content)
-                    .WithFooter(article.Date)
-                    .Build();
+                        .WithTitle(article.Title)
+                        .WithDescription(article.Content)
+                        .WithFooter(article.Date)
+                        .Build();
                     await channel.SendMessageAsync(embed: embed);
                 }
             }
@@ -74,7 +76,6 @@ public class GalnetModule
                 Console.WriteLine("No further articles.");
             }
         }
-
     }
 
     private async Task<IEnumerable<GalnetArticle>> GetNewArticles()
@@ -93,8 +94,8 @@ public class GalnetModule
         var processedData = response.Select(article =>
         {
             var updatedContent = article.Content
-            .Replace("<p>", "")
-            .Replace("</p>", "");
+                .Replace("<p>", "")
+                .Replace("</p>", "");
 
             updatedContent = unicodeBreak.Replace(updatedContent, "");
             updatedContent = lastNewLine.Replace(updatedContent, "");
@@ -104,7 +105,7 @@ public class GalnetModule
             return article;
         });
 
-        var titles = (await _db.GetValueAsync<DatabaseItemArray>("galnetTitles")).Value ?? new List<string>();
+        var titles = (await _db.GetValueAsync<DatabaseItemArray>("galnetTitles")).Value;
         var newArticles = processedData.Where(x => string.IsNullOrEmpty(titles.FirstOrDefault(y => y == x.Title)));
         var newtitles = new DatabaseItemArray()
         {
