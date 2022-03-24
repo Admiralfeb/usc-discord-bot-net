@@ -1,5 +1,4 @@
 using System.Reflection;
-
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -58,7 +57,6 @@ public class CommandHandler
     private Task ComponentCommandExecuted(ComponentCommandInfo arg1, IInteractionContext arg2, IResult arg3)
     {
         if (!arg3.IsSuccess)
-        {
             switch (arg3.Error)
             {
                 case InteractionCommandError.UnmetPrecondition:
@@ -79,7 +77,6 @@ public class CommandHandler
                 default:
                     break;
             }
-        }
 
         return Task.CompletedTask;
     }
@@ -87,7 +84,6 @@ public class CommandHandler
     private Task ContextCommandExecuted(ContextCommandInfo arg1, IInteractionContext arg2, IResult arg3)
     {
         if (!arg3.IsSuccess)
-        {
             switch (arg3.Error)
             {
                 case InteractionCommandError.UnmetPrecondition:
@@ -108,19 +104,17 @@ public class CommandHandler
                 default:
                     break;
             }
-        }
 
         return Task.CompletedTask;
     }
 
-    private Task SlashCommandExecuted(SlashCommandInfo arg1, IInteractionContext arg2, IResult arg3)
+    private async Task SlashCommandExecuted(SlashCommandInfo commandInfo, IInteractionContext context, IResult result)
     {
-        if (!arg3.IsSuccess)
-        {
-            switch (arg3.Error)
+        if (!result.IsSuccess)
+            switch (result.Error)
             {
                 case InteractionCommandError.UnmetPrecondition:
-                    // implement
+                    await context.Interaction.RespondAsync($"Not permitted: {result.ErrorReason}", ephemeral: true);
                     break;
                 case InteractionCommandError.UnknownCommand:
                     // implement
@@ -137,9 +131,5 @@ public class CommandHandler
                 default:
                     break;
             }
-        }
-
-        return Task.CompletedTask;
     }
-
 }

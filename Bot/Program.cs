@@ -60,6 +60,7 @@ internal static class Program
         services.AddSingleton<BotSocketClient>();
         services.AddSingleton(x => new InteractionService(x.GetRequiredService<BotSocketClient>()));
         services.AddSingleton<CommandHandler>();
+        services.AddSingleton<EducationCommandModule>();
         services.AddSingleton<BotEventHandler>();
         services.AddSingleton<IDatabaseService, MongoDbService>();
 
