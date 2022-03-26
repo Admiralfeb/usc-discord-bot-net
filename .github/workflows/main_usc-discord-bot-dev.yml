@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'usc-discord-bot-dev'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5AD4D76D0E10420CB10ED9ED815AB460 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_8F96551DF9DB4C22868948B610257855 }}
           package: .
