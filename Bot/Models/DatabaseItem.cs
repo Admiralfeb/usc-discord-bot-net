@@ -8,7 +8,12 @@ public class DatabaseItemBase
 
 public class DatabaseItemArray : DatabaseItemBase
 {
-    public List<string> Value { get; set; }
+    public List<string> Value { get; init; }
+}
+
+public class DatabaseItemArray<T> : DatabaseItemBase
+{
+    public List<T> Value { get; init; }
 }
 
 public class DatabaseItem : DatabaseItemBase

@@ -13,7 +13,10 @@ public class UtilityMethodsTest
     {
         var cancelTokenSource = new CancellationTokenSource();
         cancelTokenSource.Cancel();
-        await Assert.ThrowsAsync<OperationCanceledException>(() => UtilityMethods.PeriodicAsync(() => Task.Run(() => { }), TimeSpan.FromSeconds(5), cancelTokenSource.Token));
+        await Assert.ThrowsAsync<OperationCanceledException>(
+            () => UtilityMethods.PeriodicAsync(() => Task.Run(() => { }),
+            TimeSpan.FromSeconds(5),
+            cancelTokenSource.Token));
     }
 
     [Fact]
@@ -28,7 +31,10 @@ public class UtilityMethodsTest
             await Task.Run(() => runs++);
         }
 
-        await Assert.ThrowsAsync<OperationCanceledException>(() => UtilityMethods.PeriodicAsync(() => MyAction(), TimeSpan.FromSeconds(5), cancelTokenSource.Token));
+        await Assert.ThrowsAsync<OperationCanceledException>(
+            () => UtilityMethods.PeriodicAsync(() => MyAction(),
+                TimeSpan.FromSeconds(5),
+                cancelTokenSource.Token));
         Assert.Equal(2, runs);
     }
 }

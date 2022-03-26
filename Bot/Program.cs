@@ -1,5 +1,4 @@
-﻿
-using Discord;
+﻿using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -12,20 +11,20 @@ using UnitedSystemsCooperative.Bot.Services;
 
 namespace UnitedSystemsCooperative.Bot;
 
-static class Program
+internal static class Program
 {
-    static void Main(string[] _)
+    private static void Main(string[] _)
     {
         IConfiguration config = new ConfigurationBuilder()
-        .AddEnvironmentVariables(prefix: "DC_")
-        .AddJsonFile("appsettings.local.json", optional: true)
-        .AddJsonFile("appsettings.json", optional: false)
-        .Build();
+            .AddEnvironmentVariables("DC_")
+            .AddJsonFile("appsettings.local.json", true)
+            .AddJsonFile("appsettings.json", false)
+            .Build();
 
         RunAsync(config).GetAwaiter().GetResult();
     }
 
-    static async Task RunAsync(IConfiguration configuration)
+    private static async Task RunAsync(IConfiguration configuration)
     {
         using var services = ConfigureServices(configuration);
 
@@ -45,26 +44,29 @@ static class Program
         await Task.Delay(Timeout.Infinite);
     }
 
-    static Task LogAsync(LogMessage msg)
+    private static Task LogAsync(LogMessage msg)
     {
         Console.WriteLine(msg.ToString());
         return Task.CompletedTask;
     }
 
-    static ServiceProvider ConfigureServices(IConfiguration configuration)
+    private static ServiceProvider ConfigureServices(IConfiguration configuration)
     {
         var services = new ServiceCollection();
+        services.Configure<InaraConfig>(configuration.GetSection(InaraConfig.ConfigName));
+        services.Configure<List<Rank>>(configuration.GetSection("ranks"));
+
         services.AddSingleton(configuration);
         services.AddSingleton<BotSocketClient>();
         services.AddSingleton(x => new InteractionService(x.GetRequiredService<BotSocketClient>()));
         services.AddSingleton<CommandHandler>();
+        services.AddSingleton<EducationCommandModule>();
         services.AddSingleton<BotEventHandler>();
         services.AddSingleton<IDatabaseService, MongoDbService>();
 
-        services.AddHttpClient<InaraCommandModule>();
+        services.AddHttpClient<InaraCommandModule>(client => new HttpClient
+            {BaseAddress = new Uri(configuration["InaraConfig:ApiUrl"])});
         services.AddHttpClient<GalnetModule>();
-        services.Configure<InaraConfig>(configuration.GetSection(InaraConfig.ConfigName));
-        services.Configure<List<Rank>>(configuration.GetSection("ranks"));
 
         return services.BuildServiceProvider();
     }

@@ -13,7 +13,7 @@ public class InaraCmdr
     public CmdrSquadron? CommanderSquadron { get; set; }
     public CmdrSquadron? CommanderWing { get; set; }
     public string? PreferredPowerName { get; set; }
-    public string PreferredGameRole { get; set; }
+    public string? PreferredGameRole { get; set; }
     public string? AvatarImageUrl { get; set; }
     public string InaraUrl { get; set; }
     public IEnumerable<string>? OtherNamesFound { get; set; }

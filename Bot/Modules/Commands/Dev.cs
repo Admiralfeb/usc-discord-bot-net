@@ -13,10 +13,10 @@ public class DevCommandModule : InteractionModuleBase<SocketInteractionContext>
             "Click the button below for the bot's github.",
             components: new ComponentBuilder()
                 .WithButton("Click me for the bot's github",
-                style: ButtonStyle.Link,
-                url: "https://github.com/admiralfeb/usc-discord-bot-net")
+                    style: ButtonStyle.Link,
+                    url: "https://github.com/admiralfeb/usc-discord-bot-net")
                 .Build()
-            );
+        );
     }
 
     [SlashCommand("website", "List the website's github")]
@@ -26,9 +26,9 @@ public class DevCommandModule : InteractionModuleBase<SocketInteractionContext>
             "Click the button below for the website's github.",
             components: new ComponentBuilder()
                 .WithButton("Click me for the website's github",
-                style: ButtonStyle.Link,
-                url: "https://github.com/admiralfeb/usc-website")
+                    style: ButtonStyle.Link,
+                    url: "https://github.com/admiralfeb/usc-website")
                 .Build()
-            );
+        );
     }
 }
