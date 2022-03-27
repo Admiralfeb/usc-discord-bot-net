@@ -3,6 +3,7 @@ using System.Text;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using UnitedSystemsCooperative.Bot.Models;
 
@@ -11,12 +12,15 @@ namespace UnitedSystemsCooperative.Bot.Modules.Commands;
 [Group("inara", "Inara Commands")]
 public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext>
 {
+    private readonly ILogger<InaraCommandModule> _logger;
     private readonly HttpClient _httpClient;
     private readonly InaraConfig _config;
     private readonly IEnumerable<Rank> _ranks;
 
-    public InaraCommandModule(HttpClient httpClient, IOptions<InaraConfig> config, IOptions<List<Rank>> ranks)
+    public InaraCommandModule(ILogger<InaraCommandModule> logger, HttpClient httpClient, IOptions<InaraConfig> config,
+        IOptions<List<Rank>> ranks)
     {
+        _logger = logger;
         _httpClient = httpClient;
         _config = config.Value;
         _ranks = ranks.Value;
@@ -25,6 +29,7 @@ public class InaraCommandModule : InteractionModuleBase<SocketInteractionContext
     [SlashCommand("cmdr", "Get cmdr data")]
     public async Task GetCmdrData(string cmdrName)
     {
+        _logger.LogInformation("Start Get Cmdr Data for cmdr '{cmdrName}'", cmdrName);
         await DeferAsync();
         IGuildUser user = (SocketGuildUser) Context.User;
         var response = await GetInaraCmdr(cmdrName, user);

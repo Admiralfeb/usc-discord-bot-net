@@ -1,12 +1,12 @@
 ﻿using Discord;
 using Discord.Interactions;
-using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UnitedSystemsCooperative.Bot.Interfaces;
 using UnitedSystemsCooperative.Bot.Models;
 using UnitedSystemsCooperative.Bot.Modules;
 using UnitedSystemsCooperative.Bot.Modules.Commands;
+using UnitedSystemsCooperative.Bot.Modules.Events;
 using UnitedSystemsCooperative.Bot.Services;
 
 namespace UnitedSystemsCooperative.Bot;
@@ -16,7 +16,7 @@ internal static class Program
     private static void Main(string[] _)
     {
         IConfiguration config = new ConfigurationBuilder()
-            .AddEnvironmentVariables("DC_")
+            .AddEnvironmentVariables()
             .AddJsonFile("appsettings.local.json", true)
             .AddJsonFile("appsettings.json", false)
             .Build();
@@ -26,7 +26,7 @@ internal static class Program
 
     private static async Task RunAsync(IConfiguration configuration)
     {
-        using var services = ConfigureServices(configuration);
+        await using var services = ConfigureServices(configuration);
 
         var client = services.GetRequiredService<BotSocketClient>();
         var commands = services.GetRequiredService<InteractionService>();
@@ -55,6 +55,7 @@ internal static class Program
         var services = new ServiceCollection();
         services.Configure<InaraConfig>(configuration.GetSection(InaraConfig.ConfigName));
         services.Configure<List<Rank>>(configuration.GetSection("ranks"));
+        services.AddLogging();
 
         services.AddSingleton(configuration);
         services.AddSingleton<BotSocketClient>();

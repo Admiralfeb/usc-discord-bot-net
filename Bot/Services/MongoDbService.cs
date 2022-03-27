@@ -8,6 +8,7 @@ namespace UnitedSystemsCooperative.Bot.Services;
 public class MongoDbService : IDatabaseService
 {
     private readonly string _connString;
+
     public MongoDbService(IConfiguration config)
     {
         _connString = config.GetConnectionString("mongoDb");
@@ -32,11 +33,11 @@ public class MongoDbService : IDatabaseService
         await collection.FindOneAndUpdateAsync(
             Builders<T>.Filter.Eq("key", key),
             Builders<T>.Update.Set("value", value),
-            new FindOneAndUpdateOptions<T>() { IsUpsert = true }
+            new FindOneAndUpdateOptions<T>() {IsUpsert = true}
         );
     }
 
-    public Task<JoinRequest> GetJoinRequest(string discordUserName)
+    public Task<JoinRequest?> GetJoinRequest(string discordUserName)
     {
         throw new NotImplementedException();
     }

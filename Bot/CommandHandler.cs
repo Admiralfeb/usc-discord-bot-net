@@ -117,18 +117,15 @@ public class CommandHandler
                     await context.Interaction.RespondAsync($"Not permitted: {result.ErrorReason}", ephemeral: true);
                     break;
                 case InteractionCommandError.UnknownCommand:
-                    // implement
-                    break;
                 case InteractionCommandError.BadArgs:
-                    // implement
-                    break;
                 case InteractionCommandError.Exception:
-                    // implement
-                    break;
                 case InteractionCommandError.Unsuccessful:
-                    // implement
-                    break;
                 default:
+                    const string errorMessage = "An error occurred this command";
+                    if (context.Interaction.HasResponded)
+                        await context.Interaction.ModifyOriginalResponseAsync(x => x.Content = errorMessage);
+                    else
+                        await context.Interaction.RespondAsync("An error occurred with that command.", ephemeral: true);
                     break;
             }
     }
