@@ -37,9 +37,15 @@ public class MongoDbService : IDatabaseService
         );
     }
 
-    public Task<JoinRequest?> GetJoinRequest(string discordUserName)
+    public async Task<JoinRequest?> GetJoinRequest(string discordUserName)
     {
-        throw new NotImplementedException();
+        var client = GetClient();
+        var database = client.GetDatabase("usc");
+        var collection = database.GetCollection<JoinRequest>("joinRequests");
+
+        var doc = await collection.Find(Builders<JoinRequest>.Filter.Eq("discord", discordUserName)).FirstAsync();
+
+        return doc;
     }
 
     public Task SetEmail(string tag, string email)

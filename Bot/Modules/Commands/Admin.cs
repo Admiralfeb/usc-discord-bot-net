@@ -161,6 +161,7 @@ public class AdminCommandModule : InteractionModuleBase<SocketInteractionContext
         }
     }
 
+    [RequireContext(ContextType.Guild)]
     [Group("gankers", "Controls the ganker listing.")]
     public class GankerListSubCommands : InteractionModuleBase<SocketInteractionContext>
     {

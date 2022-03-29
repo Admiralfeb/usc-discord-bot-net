@@ -34,8 +34,8 @@ public partial class BotEventHandler
     public void Initialize()
     {
         _client.Ready += OnReady;
-        _client.UserJoined += OnGuildMemberAdd;
-        _client.UserLeft += OnGuildMemberRemove;
+        _client.UserJoined += OnUserJoined;
+        _client.UserLeft += OnUserLeft;
         _client.MessageReceived += OnMessageReceived;
     }
 
@@ -47,7 +47,7 @@ public partial class BotEventHandler
             await _commands.RegisterCommandsGloballyAsync(true);
     }
 
-    public async Task OnGuildMemberAdd(SocketGuildUser user)
+    public async Task OnUserJoined(SocketGuildUser user)
     {
         var roles = user.Guild.Roles;
         await UtilityMethods.SetRole(user, roles, "Dissociate Member");
@@ -61,7 +61,7 @@ public partial class BotEventHandler
             await RequestJoinRequest(user, joinChannel);
     }
 
-    public async Task OnGuildMemberRemove(SocketGuild guild, SocketUser user)
+    public async Task OnUserLeft(SocketGuild guild, SocketUser user)
     {
         var guildUser = (SocketGuildUser) user;
         var userRoles = guildUser.Roles.Aggregate(new StringBuilder(), (acc, val) => acc.Append($"{val} ")).ToString();

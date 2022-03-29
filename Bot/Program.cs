@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Interactions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using UnitedSystemsCooperative.Bot.Interfaces;
 using UnitedSystemsCooperative.Bot.Models;
@@ -16,9 +17,9 @@ internal static class Program
     private static void Main(string[] _)
     {
         IConfiguration config = new ConfigurationBuilder()
-            .AddEnvironmentVariables()
             .AddJsonFile("appsettings.local.json", true)
             .AddJsonFile("appsettings.json", false)
+            .AddEnvironmentVariables()
             .Build();
 
         RunAsync(config).GetAwaiter().GetResult();
@@ -68,6 +69,7 @@ internal static class Program
         services.AddHttpClient<InaraCommandModule>(client => new HttpClient
             {BaseAddress = new Uri(configuration["InaraConfig:ApiUrl"])});
         services.AddHttpClient<GalnetModule>();
+        services.AddHttpClient();
 
         return services.BuildServiceProvider();
     }

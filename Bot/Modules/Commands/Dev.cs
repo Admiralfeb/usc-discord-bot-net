@@ -14,7 +14,7 @@ public class DevCommandModule : InteractionModuleBase<SocketInteractionContext>
             components: new ComponentBuilder()
                 .WithButton("Click me for the bot's github",
                     style: ButtonStyle.Link,
-                    url: "https://github.com/admiralfeb/usc-discord-bot-net")
+                    url: "https://github.com/unitedsystemscooperative/usc-discord-bot-net")
                 .Build()
         );
     }
@@ -27,7 +27,7 @@ public class DevCommandModule : InteractionModuleBase<SocketInteractionContext>
             components: new ComponentBuilder()
                 .WithButton("Click me for the website's github",
                     style: ButtonStyle.Link,
-                    url: "https://github.com/admiralfeb/usc-website")
+                    url: "https://github.com/unitedsystemscooperative/usc-website")
                 .Build()
         );
     }
