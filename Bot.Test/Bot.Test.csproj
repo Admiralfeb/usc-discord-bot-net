@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+      <TargetFramework>net6.0</TargetFramework>
+      <Nullable>enable</Nullable>
 
-    <IsPackable>false</IsPackable>
-    <RootNamespace>UnitedSystemsCooperative.Bot.Test</RootNamespace>
+      <IsPackable>false</IsPackable>
+      <RootNamespace>UnitedSystemsCooperative.Bot.Test</RootNamespace>
+      <Configurations>Debug;Release;Dev;Production</Configurations>
+      <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

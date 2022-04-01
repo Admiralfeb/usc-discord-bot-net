@@ -6,16 +6,17 @@ WORKDIR /app
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
 
+ARG buildEnv=Dev
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["Bot/Bot.csproj", "./"]
 RUN dotnet restore "Bot.csproj"
 COPY "Bot/" .
 WORKDIR "/src/."
-RUN dotnet build "Bot.csproj" -c Release -o /app/build
+RUN dotnet build "Bot.csproj" -c $buildEnv -o /app/build
 
 FROM build as publish
-RUN dotnet publish "Bot.csproj" -c Release -o /app/publish
+RUN dotnet publish "Bot.csproj" -c $buildEnv -o /app/publish
 
 FROM base as final
 WORKDIR /app

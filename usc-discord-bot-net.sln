@@ -11,6 +11,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Dev|Any CPU = Dev|Any CPU
+		Production|Any CPU = Production|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -20,9 +22,17 @@ Global
 		{095030FC-0853-4677-8B15-24E40FE70961}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{095030FC-0853-4677-8B15-24E40FE70961}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{095030FC-0853-4677-8B15-24E40FE70961}.Release|Any CPU.Build.0 = Release|Any CPU
+		{095030FC-0853-4677-8B15-24E40FE70961}.Dev|Any CPU.ActiveCfg = Dev|Any CPU
+		{095030FC-0853-4677-8B15-24E40FE70961}.Dev|Any CPU.Build.0 = Dev|Any CPU
+		{095030FC-0853-4677-8B15-24E40FE70961}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{095030FC-0853-4677-8B15-24E40FE70961}.Production|Any CPU.Build.0 = Production|Any CPU
 		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Dev|Any CPU.ActiveCfg = Dev|Any CPU
+		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Dev|Any CPU.Build.0 = Dev|Any CPU
+		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Production|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA2C1A43-6835-43BD-9276-5EC971CD6022}.Production|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

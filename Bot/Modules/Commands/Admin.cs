@@ -299,6 +299,7 @@ public class AdminCommandModule : InteractionModuleBase<SocketInteractionContext
                 .WithDescription(string.Join("\n", gankerList.Reverse()))
                 .Build();
 
+            // TODO: update these values to permit injection.
             var channelId = (await _db.GetValueAsync<DatabaseItem>("gank_report_channel")).Value;
             var messageId = (await _db.GetValueAsync<DatabaseItem>("gank_report_message")).Value;
             if (Context.Guild.GetChannel(ulong.Parse(channelId)) is not SocketTextChannel channel)

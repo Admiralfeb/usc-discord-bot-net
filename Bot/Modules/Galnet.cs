@@ -53,6 +53,7 @@ public class GalnetModule
             var newArticles = await GetNewArticles();
             if (newArticles.Any())
             {
+                //TODO: Injectable
                 var channelId = (await _db.GetValueAsync<DatabaseItem>("galnetChannel")).Value;
                 if (string.IsNullOrEmpty(channelId))
                 {

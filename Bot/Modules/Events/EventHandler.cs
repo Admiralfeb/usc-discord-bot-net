@@ -53,6 +53,7 @@ public partial class BotEventHandler
         await UtilityMethods.SetRole(user, roles, "Dissociate Member");
         await UtilityMethods.SetRole(user, roles, "New Member");
 
+        // TODO: Injectable
         var joinChannel = user.Guild.GetChannel(708038933132476537) as SocketTextChannel;
         var joinRequest = await _db.GetJoinRequest(user.ToString());
         if (joinRequest != null)
@@ -74,6 +75,7 @@ public partial class BotEventHandler
             .WithCurrentTimestamp()
             .Build();
 
+        // TODO: Injectable
         var joinChannel = guild.GetTextChannel(708038933132476537);
         if (joinChannel != null)
             await joinChannel.SendMessageAsync(embed: embed);
@@ -83,6 +85,7 @@ public partial class BotEventHandler
     {
         if (message is not SocketUserMessage)
             return;
+        // TODO: Injectable
         if (message.Channel.Id != 708038933132476537)
             return;
         if (message.Author.IsWebhook == false && (message.Author as SocketWebhookUser).Username != "Application System")

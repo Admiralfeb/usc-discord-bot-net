@@ -18,6 +18,11 @@ internal static class Program
     {
         IConfiguration config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.local.json", true)
+#if DEV
+            .AddJsonFile("appsettings.dev.json", false)
+#else
+            .AddJsonFile("appsettings.prod.json", false)
+#endif
             .AddJsonFile("appsettings.json", false)
             .AddEnvironmentVariables()
             .Build();
