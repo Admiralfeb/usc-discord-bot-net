@@ -1,22 +1,12 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 #pragma warning disable CS8618
 namespace UnitedSystemsCooperative.Bot.Models;
 
-public class DatabaseItemBase
+public class DatabaseItem<T>
 {
-    public string Key { get; set; }
-}
-
-public class DatabaseItemArray : DatabaseItemBase
-{
-    public List<string> Value { get; init; }
-}
-
-public class DatabaseItemArray<T> : DatabaseItemBase
-{
-    public List<T> Value { get; init; }
-}
-
-public class DatabaseItem : DatabaseItemBase
-{
-    public string Value { get; set; }
+    public ObjectId _id { get; set; }
+    [BsonElement("key")] public string Key { get; set; }
+    [BsonElement("value")] public T Value { get; set; }
 }

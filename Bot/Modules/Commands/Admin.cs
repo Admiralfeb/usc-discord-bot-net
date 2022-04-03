@@ -166,6 +166,8 @@ public class AdminCommandModule : InteractionModuleBase<SocketInteractionContext
     public class GankerListSubCommands : InteractionModuleBase<SocketInteractionContext>
     {
         private readonly IDatabaseService _db;
+        private const string GankChannelIdKey = "gank_report_channel";
+        private const string GankMessageIdKey = "gank_report_message";
 
         public GankerListSubCommands(IDatabaseService db)
         {
@@ -284,12 +286,12 @@ public class AdminCommandModule : InteractionModuleBase<SocketInteractionContext
 
         private async Task<List<string>> GetGankerList()
         {
-            return (await _db.GetValueAsync<DatabaseItemArray<string>>("gankers")).Value;
+            return await _db.GetValueAsync<List<string>>("gankers");
         }
 
         private async Task SetGankerList(IEnumerable<string> gankers)
         {
-            await _db.SetValueAsync("gankers", new DatabaseItemArray() {Key = "gankers", Value = gankers.ToList()});
+            await _db.SetValueAsync("gankers", gankers.ToList());
         }
 
         private async Task UpdateGankerMessage(IEnumerable<string> gankerList)
@@ -299,16 +301,20 @@ public class AdminCommandModule : InteractionModuleBase<SocketInteractionContext
                 .WithDescription(string.Join("\n", gankerList.Reverse()))
                 .Build();
 
-            // TODO: update these values to permit injection.
-            var channelId = (await _db.GetValueAsync<DatabaseItem>("gank_report_channel")).Value;
-            var messageId = (await _db.GetValueAsync<DatabaseItem>("gank_report_message")).Value;
+            var channelId = (await _db.GetValueAsync<DatabaseItem<string>>(GankChannelIdKey)).Value;
+            var messageId = (await _db.GetValueAsync<DatabaseItem<string>>(GankMessageIdKey)).Value;
             if (Context.Guild.GetChannel(ulong.Parse(channelId)) is not SocketTextChannel channel)
                 throw new ChannelNotFoundException();
 
             if (await channel.GetMessageAsync(ulong.Parse(messageId)) is not SocketUserMessage message)
-                throw new MessageNotFoundException();
-
-            await message.ModifyAsync(x => x.Embeds = new[] {embed});
+            {
+                var newMessage = await channel.SendMessageAsync(embed: embed);
+                await _db.SetValueAsync(GankMessageIdKey, newMessage.Id.ToString());
+            }
+            else
+            {
+                await message.ModifyAsync(x => x.Embeds = new[] {embed});
+            }
         }
     }
 }

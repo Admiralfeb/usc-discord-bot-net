@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Interactions;
+using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +35,7 @@ internal static class Program
     {
         await using var services = ConfigureServices(configuration);
 
-        var client = services.GetRequiredService<BotSocketClient>();
+        var client = services.GetRequiredService<DiscordSocketClient>();
         var commands = services.GetRequiredService<InteractionService>();
 
         client.Log += LogAsync;
@@ -45,6 +46,7 @@ internal static class Program
 
         var botToken = configuration.GetValue<string>("BotToken");
         await client.LoginAsync(TokenType.Bot, botToken);
+
         await client.StartAsync();
 
         await Task.Delay(Timeout.Infinite);
@@ -58,18 +60,27 @@ internal static class Program
 
     private static ServiceProvider ConfigureServices(IConfiguration configuration)
     {
+        DiscordSocketConfig socketConfig = new()
+        {
+            GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages |
+                             GatewayIntents.GuildMessageReactions | GatewayIntents.GuildMembers,
+            AlwaysDownloadUsers = true
+        };
+
         var services = new ServiceCollection();
         services.Configure<InaraConfig>(configuration.GetSection(InaraConfig.ConfigName));
+        services.Configure<ServerValues>(configuration.GetSection(ServerValues.ConfigName));
         services.Configure<List<Rank>>(configuration.GetSection("ranks"));
-        services.AddLogging();
 
         services.AddSingleton(configuration);
-        services.AddSingleton<BotSocketClient>();
-        services.AddSingleton(x => new InteractionService(x.GetRequiredService<BotSocketClient>()));
+        services.AddSingleton(socketConfig);
+        services.AddSingleton<DiscordSocketClient>();
+        services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
         services.AddSingleton<CommandHandler>();
         services.AddSingleton<EducationCommandModule>();
         services.AddSingleton<BotEventHandler>();
         services.AddSingleton<IDatabaseService, MongoDbService>();
+        services.AddSingleton<GalnetModule>();
 
         services.AddHttpClient<InaraCommandModule>(client => new HttpClient
             {BaseAddress = new Uri(configuration["InaraConfig:ApiUrl"])});

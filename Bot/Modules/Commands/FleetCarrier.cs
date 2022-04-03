@@ -3,6 +3,7 @@ using Discord.Interactions;
 namespace UnitedSystemsCooperative.Bot.Modules.Commands;
 
 [RequireContext(ContextType.Guild)]
+[RequireOwner]
 [Group("fc", "Fleet Carrier Commands")]
 public class FleetCarrierCommandModule : InteractionModuleBase<SocketInteractionContext>
 {

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using UnitedSystemsCooperative.Bot.Interfaces;
 using UnitedSystemsCooperative.Bot.Models;
@@ -14,26 +15,28 @@ public class MongoDbService : IDatabaseService
         _connString = config.GetConnectionString("mongoDb");
     }
 
-    public async Task<T> GetValueAsync<T>(string key) where T : DatabaseItemBase
+    public async Task<T> GetValueAsync<T>(string key)
     {
         var client = GetClient();
         var database = client.GetDatabase("usc");
-        var collection = database.GetCollection<T>("discordKeys");
-        var doc = await collection.Find(Builders<T>.Filter.Eq("key", key)).FirstAsync();
+        var collection = database.GetCollection<DatabaseItem<T>>("discordKeys");
+        var doc = await collection.Find(Builders<DatabaseItem<T>>.Filter.Eq("key", key)).FirstOrDefaultAsync();
 
-        return doc;
+        return doc.Value;
     }
 
-    public async Task SetValueAsync<T>(string key, T value) where T : DatabaseItemBase
+    public async Task SetValueAsync<T>(string key, T value)
     {
         var client = GetClient();
         var database = client.GetDatabase("usc");
-        var collection = database.GetCollection<T>("discordKeys");
+        var collection = database.GetCollection<DatabaseItem<T>>("discordKeys");
+
+        var newDoc = new DatabaseItem<T>() {Key = key, Value = value};
 
         await collection.FindOneAndUpdateAsync(
-            Builders<T>.Filter.Eq("key", key),
-            Builders<T>.Update.Set("value", value),
-            new FindOneAndUpdateOptions<T>() {IsUpsert = true}
+            Builders<DatabaseItem<T>>.Filter.Eq("key", key),
+            Builders<DatabaseItem<T>>.Update.Set("value", value),
+            new FindOneAndUpdateOptions<DatabaseItem<T>>() {IsUpsert = true}
         );
     }
 
@@ -43,9 +46,12 @@ public class MongoDbService : IDatabaseService
         var database = client.GetDatabase("usc");
         var collection = database.GetCollection<JoinRequest>("joinRequests");
 
-        var doc = await collection.Find(Builders<JoinRequest>.Filter.Eq("discord", discordUserName)).FirstAsync();
+        var request = await collection
+            .Find(Builders<JoinRequest>
+                .Filter.Eq("discord", discordUserName))
+            .FirstOrDefaultAsync();
 
-        return doc;
+        return request;
     }
 
     public Task SetEmail(string tag, string email)

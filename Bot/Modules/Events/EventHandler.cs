@@ -3,32 +3,40 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using UnitedSystemsCooperative.Bot.Interfaces;
+using UnitedSystemsCooperative.Bot.Models;
 using UnitedSystemsCooperative.Bot.Utils;
 
 namespace UnitedSystemsCooperative.Bot.Modules.Events;
 
 public partial class BotEventHandler
 {
-    private readonly BotSocketClient _client;
+    private readonly DiscordSocketClient _client;
     private readonly InteractionService _commands;
     private readonly IServiceProvider _services;
     private readonly IConfiguration _configuration;
     private readonly IDatabaseService _db;
+    private readonly GalnetModule _galnet;
+    private readonly ServerValues _serverValues;
 
 
     public BotEventHandler(
-        BotSocketClient client,
+        DiscordSocketClient client,
         InteractionService commands,
         IServiceProvider services,
         IConfiguration configuration,
-        IDatabaseService db)
+        IOptions<ServerValues> serverValueOptions,
+        IDatabaseService db,
+        GalnetModule galnet)
     {
         _client = client;
         _commands = commands;
         _services = services;
         _configuration = configuration;
+        _serverValues = serverValueOptions.Value;
         _db = db;
+        _galnet = galnet;
     }
 
     public void Initialize()
@@ -36,7 +44,7 @@ public partial class BotEventHandler
         _client.Ready += OnReady;
         _client.UserJoined += OnUserJoined;
         _client.UserLeft += OnUserLeft;
-        _client.MessageReceived += OnMessageReceived;
+        // _client.MessageReceived += OnMessageReceived;
     }
 
     public async Task OnReady()
@@ -45,6 +53,8 @@ public partial class BotEventHandler
             await _commands.RegisterCommandsToGuildAsync(_configuration.GetValue<ulong>("testGuild"), true);
         else
             await _commands.RegisterCommandsGloballyAsync(true);
+
+        await _galnet.InitializeAsync().ConfigureAwait(false);
     }
 
     public async Task OnUserJoined(SocketGuildUser user)
@@ -53,8 +63,7 @@ public partial class BotEventHandler
         await UtilityMethods.SetRole(user, roles, "Dissociate Member");
         await UtilityMethods.SetRole(user, roles, "New Member");
 
-        // TODO: Injectable
-        var joinChannel = user.Guild.GetChannel(708038933132476537) as SocketTextChannel;
+        var joinChannel = user.Guild.GetChannel(_serverValues.JoinChannelId) as SocketTextChannel;
         var joinRequest = await _db.GetJoinRequest(user.ToString());
         if (joinRequest != null)
             await UtilityMethods.AutoSetupMember(user, joinRequest, joinChannel);
@@ -75,8 +84,7 @@ public partial class BotEventHandler
             .WithCurrentTimestamp()
             .Build();
 
-        // TODO: Injectable
-        var joinChannel = guild.GetTextChannel(708038933132476537);
+        var joinChannel = guild.GetTextChannel(_serverValues.JoinChannelId);
         if (joinChannel != null)
             await joinChannel.SendMessageAsync(embed: embed);
     }
@@ -85,8 +93,7 @@ public partial class BotEventHandler
     {
         if (message is not SocketUserMessage)
             return;
-        // TODO: Injectable
-        if (message.Channel.Id != 708038933132476537)
+        if (message.Channel.Id != _serverValues.JoinChannelId)
             return;
         if (message.Author.IsWebhook == false && (message.Author as SocketWebhookUser).Username != "Application System")
             return;

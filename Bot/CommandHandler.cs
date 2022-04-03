@@ -7,11 +7,11 @@ namespace UnitedSystemsCooperative.Bot;
 
 public class CommandHandler
 {
-    private readonly BotSocketClient _client;
+    private readonly DiscordSocketClient _client;
     private readonly InteractionService _commands;
     private readonly IServiceProvider _services;
 
-    public CommandHandler(BotSocketClient client, InteractionService commands, IServiceProvider services)
+    public CommandHandler(DiscordSocketClient client, InteractionService commands, IServiceProvider services)
     {
         _client = client;
         _commands = commands;
